@@ -1,0 +1,138 @@
+# Configuration file for Wealth Management ML Pipeline
+
+# Azure OpenAI API Configuration
+azure_openai:
+  api_type: "azure"
+  api_version: "2023-05-15"
+  api_base: "YOUR_AZURE_OPENAI_ENDPOINT"
+  api_key: "YOUR_AZURE_OPENAI_KEY"
+  deployment_name: "text-davinci-003"
+  model_name: "gpt-3.5-turbo"
+
+# Data Processing Configuration
+data_processing:
+  # Technical indicators configuration
+  technical_indicators:
+    sma_periods: [20, 50, 200]
+    ema_periods: [12, 26]
+    rsi_period: 14
+    bollinger_bands:
+      period: 20
+      std_dev: 2
+    macd:
+      fast_period: 12
+      slow_period: 26
+      signal_period: 9
+
+  # Risk metrics configuration
+  risk_metrics:
+    volatility_window: 20
+    var_confidence_level: 0.95
+    var_window: 252
+    sharpe_ratio:
+      risk_free_rate: 0.02
+      trading_days: 252
+
+  # Feature engineering
+  feature_columns: [
+    "Open",
+    "High",
+    "Low",
+    "Close",
+    "Volume",
+    "SMA_20",
+    "SMA_50",
+    "RSI",
+    "BB_upper",
+    "BB_lower",
+    "ATR",
+    "Daily_Returns",
+    "Volatility",
+    "Sentiment_Score"
+  ]
+
+# Model Configuration
+model_config:
+  feature_cols: [
+    "SMA_20",
+    "SMA_50",
+    "RSI",
+    "BB_upper",
+    "BB_lower",
+    "ATR",
+    "Volatility",
+    "VaR_95",
+    "Sentiment_Score"
+  ]
+  target_col: "Close"
+  test_size: 0.2
+  cv_folds: 5
+  
+  # Prophet model parameters
+  prophet_params:
+    changepoint_prior_scale: 0.05
+    seasonality_prior_scale: 10
+    seasonality_mode: "multiplicative"
+    daily_seasonality: true
+    weekly_seasonality: true
+    yearly_seasonality: true
+    interval_width: 0.95
+
+  # LightGBM parameters
+  lgbm_params:
+    objective: "regression"
+    metric: "rmse"
+    boosting_type: "gbdt"
+    num_leaves: 31
+    learning_rate: 0.05
+    feature_fraction: 0.9
+    bagging_fraction: 0.8
+    bagging_freq: 5
+    verbose: -1
+    early_stopping_rounds: 50
+    num_boost_round: 1000
+
+# MLflow Configuration
+mlflow:
+  tracking_uri: "sqlite:///mlflow.db"
+  experiment_name: "wealth_management_pipeline"
+  register_model_name: "wealth_management_model"
+
+# Logging Configuration
+logging:
+  version: 1
+  disable_existing_loggers: false
+  formatters:
+    standard:
+      format: "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
+  handlers:
+    console:
+      class: logging.StreamHandler
+      level: INFO
+      formatter: standard
+      stream: ext://sys.stdout
+    file:
+      class: logging.FileHandler
+      level: INFO
+      formatter: standard
+      filename: "pipeline.log"
+  root:
+    level: INFO
+    handlers: [console, file]
+
+# Data Validation Settings
+validation:
+  allowed_missing_pct: 0.05
+  min_price_value: 0.01
+  max_price_value: 1000000
+  min_volume: 0
+  outlier_std_threshold: 3
+
+# Pipeline Settings
+pipeline:
+  cache_dir: "./cache"
+  model_save_dir: "./models"
+  prediction_horizon: 30
+  batch_size: 1000
+  num_workers: 4
+  use_gpu: false
