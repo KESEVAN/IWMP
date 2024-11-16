@@ -19,9 +19,9 @@ This project implements a comprehensive financial analysis system that processes
 
 ## Project Structure
 ```
-├── wealth.py           # Main pipeline implementation
-├── ARIMA.py           # ARIMA model and portfolio analysis
-├── config.yaml        # Configuration parameters
+├── src/code/main.py           # Main pipeline implementation
+├── src/code/ARIMA.py           # ARIMA model and portfolio analysis
+├── src/code/config.yaml        # Configuration parameters
 └── README.md         # Documentation
 ```
 
